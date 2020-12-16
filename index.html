@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn By Reading (because the only way to get better is by doing a lots)</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+    <div id="controlContainer">
+        <button id="smallerFont" class="ctrl-btn">-</button>
+        FONT
+        <button id="largerFont" class="ctrl-btn">+</button>
+    </div>
+
+    <div id="readBoxContainer" class="box-sizing-border-box">
+        <textarea id="readBox" class="box-sizing-border-box" spellcheck="false" readonly></textarea>
+
+
+        <!-- Modal content -->
+        <div id="selectedTextContainer" class="modal-content">
+            <span id="selectedText"></span>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div class="modal-trans">
+
+        <!-- Modal content -->
+        <div class="modal-content-trans">
+            <iframe id="transWeb" src=""></iframe>
+            <div class="modal-content-trans-btns">
+                <button id="saveBtn">Save</button>
+                <button id="cancelBtn">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyC0RaAr4hEDAL3nyE5n8kWIoY3FECiaDZI",
+            authDomain: "learnbyread-758ee.firebaseapp.com",
+            projectId: "learnbyread-758ee",
+            storageBucket: "learnbyread-758ee.appspot.com",
+            messagingSenderId: "862301332272",
+            appId: "1:862301332272:web:1ad9727a86f70a96495ef5"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script src="simpledata.js"></script>
+    <script src="firebase.js"></script>
+    <script src="scripts.js"></script>
+</body>
+
+</html>
