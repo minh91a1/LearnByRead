@@ -115,6 +115,26 @@ logic = {
         }
 
         logic.getSelection()
+    },
+
+    onClickSaveToServerBtn: function(e) {
+        let textarea = document.getElementById('readBox');
+        let scrollTop = textarea.scrollTop;
+        var currentFont = parseInt($('#readBox').css('font-size').split('px')[0])
+
+        fb.set__Infos_Basic__ToDb({
+            fontsize: currentFont,
+            scrolltop: scrollTop,
+        });
+
+    },
+
+    getDataFromDb: function() {
+        fb.get__Infos_Basic__FromDb((data) => {
+            let textarea = document.getElementById('readBox');
+            textarea.scrollTop = data.scrolltop
+            $('#readBox').css('font-size', (data.fontsize) + 'px')
+        });
     }
 }
 
@@ -147,6 +167,7 @@ $( document ).ready(function() {
         $('.modal-trans').on('touchend', logic.onClickOnTransBox);
         $('#saveBtn').on('touchend', logic.onClickSaveBtn);
         $('#cancelBtn').on('touchend', logic.onClickCancelBtn);
+        $('#saveToServer').on('touchend', logic.onClickSaveToServerBtn);
 
         $('.modal-content').addClass('modal-content-mobile')
 
@@ -157,7 +178,11 @@ $( document ).ready(function() {
         $('.modal-trans').on('click', logic.onClickOnTransBox);
         $('#saveBtn').on('click', logic.onClickSaveBtn);
         $('#cancelBtn').on('click', logic.onClickCancelBtn);
+        $('#saveToServer').on('click', logic.onClickSaveToServerBtn);
     }
+
+
+    logic.getDataFromDb();
 });
 
 
