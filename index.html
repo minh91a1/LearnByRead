@@ -12,7 +12,8 @@
 <body>
 
     <div id="controlContainer">
-        <button id="saveToServer" class="ctrl-btn">SAVE TO SERVER</button>
+        <button id="myWords" class="ctrl-btn">WORDS</button>
+        <button id="saveToServer" class="ctrl-btn">SAVE</button>
         <button id="smallerFont" class="ctrl-btn">-</button>
         FONT
         <button id="largerFont" class="ctrl-btn">+</button>
@@ -28,7 +29,7 @@
         </div>
     </div>
 
-    <!-- The Modal -->
+    <!-- The Modal Translate -->
     <div class="modal-trans">
 
         <!-- Modal content -->
@@ -37,6 +38,28 @@
             <div class="modal-content-trans-btns">
                 <button id="saveBtn">Save</button>
                 <button id="cancelBtn">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- The Modal Save -->
+    <div class="modal-save-word">
+
+        <!-- Modal content -->
+        <div class="modal-content-save-word">
+            <div class="modal-content-save-word-input-text-container">
+                <span>Pronunciation</span>
+                <input id="pronunciationTextbox" type="text" />
+                <span>Han tu</span>
+                <input id="hantuTextbox" type="text" />
+                <span>Meaning</span>
+                <input id="meanTextbox" type="text" />
+            </div>
+            <div class="modal-content-trans-btns">
+                <button id="clearWordBtn">Clear</button>
+                <button id="saveWordBtn">Save</button>
+                <button id="cancelSaveWordBtn">Cancel</button>
             </div>
         </div>
 

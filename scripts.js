@@ -84,8 +84,25 @@ logic = {
         $('.modal-trans').hide();
     },
 
+    showSaveWordBox: function() {
+        var word = document.getElementById('selectedText').innerHTML;
+        fb.getSingle_Words_FromDb(word, (data) => {
+            if (data) {
+                document.getElementById('pronunciationTextbox').value = data.read
+                document.getElementById('hantuTextbox').value = data.hantu
+                document.getElementById('meanTextbox').value = data.mean                
+            }
+
+            $('.modal-save-word').show();
+        });
+    },
+
+    hideSaveWordBox: function() {
+        $('.modal-save-word').hide();
+    },
+
     onClickSaveBtn: function(e) {
-        logic.hideTransbox();
+        logic.showSaveWordBox()
 
         e.stopPropagation();
         e.preventDefault();
@@ -93,6 +110,46 @@ logic = {
 
     onClickCancelBtn: function(e) {
         logic.hideTransbox();
+
+        e.stopPropagation();
+        e.preventDefault();
+    },
+
+    onClickClearWordBtn: function(e) {
+        document.getElementById('pronunciationTextbox').value = ''
+        document.getElementById('hantuTextbox').value = ''
+        document.getElementById('meanTextbox').value = ''
+        setTimeout(()=>{
+            document.getElementById('pronunciationTextbox').focus()
+        }, 200)
+    },
+
+    onClickSaveWordBtn: function(e) {
+        var word = document.getElementById('selectedText').innerHTML;
+
+        var pr = document.getElementById('pronunciationTextbox').value
+        var ht = document.getElementById('hantuTextbox').value
+        var mn = document.getElementById('meanTextbox').value
+
+        if (pr != "" || mn != "") {
+            console.log(pr,mn)
+            fb.set__Words__ToDb(word, {
+                read: pr,
+                mean: mn,
+                link: 'https://mazii.net/search?dict=javi&type=w&query='+ word +'&hl==vi-VN',
+                hantu: ht,
+            })
+        }
+
+        logic.hideSaveWordBox()
+        logic.hideTransbox();
+
+        e.stopPropagation();
+        e.preventDefault();
+    },
+
+    onClickCancelSaveWordBtn: function(e) {
+        logic.hideSaveWordBox()
 
         e.stopPropagation();
         e.preventDefault();
@@ -165,9 +222,15 @@ $( document ).ready(function() {
         $('.modal-content').on('touchend', logic.onClickOnMinibox);
         $('.modal-content-trans').on('touchend', logic.onClickOnTransBox);
         $('.modal-trans').on('touchend', logic.onClickOnTransBox);
+        
         $('#saveBtn').on('touchend', logic.onClickSaveBtn);
         $('#cancelBtn').on('touchend', logic.onClickCancelBtn);
+        
         $('#saveToServer').on('touchend', logic.onClickSaveToServerBtn);
+
+        $('#clearWordBtn').on('touchend', logic.onClickClearWordBtn);
+        $('#saveWordBtn').on('touchend', logic.onClickSaveWordBtn);
+        $('#cancelSaveWordBtn').on('touchend', logic.onClickCancelSaveWordBtn);
 
         $('.modal-content').addClass('modal-content-mobile')
 
@@ -176,13 +239,21 @@ $( document ).ready(function() {
         $('.modal-content').on('click', logic.onClickOnMinibox);
         $('.modal-content-trans').on('click', logic.onClickOnTransBox);
         $('.modal-trans').on('click', logic.onClickOnTransBox);
+        
         $('#saveBtn').on('click', logic.onClickSaveBtn);
         $('#cancelBtn').on('click', logic.onClickCancelBtn);
+        
         $('#saveToServer').on('click', logic.onClickSaveToServerBtn);
+
+        $('#clearWordBtn').on('click', logic.onClickClearWordBtn);
+        $('#saveWordBtn').on('click', logic.onClickSaveWordBtn);
+        $('#cancelSaveWordBtn').on('click', logic.onClickCancelSaveWordBtn);
     }
 
 
     logic.getDataFromDb();
+
+    logic.showSaveWordBox()
 });
 
 

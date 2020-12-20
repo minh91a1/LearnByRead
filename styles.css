@@ -36,7 +36,7 @@ body {
 }
 
 .ctrl-btn {
-    margin: 0 1rem;
+    margin: 0 0.5rem;
 }
 
 #selectedText {
@@ -124,4 +124,48 @@ iframe {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+
+/* The Modal (background) */
+.modal-save-word {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+
+    opacity: 0.9;
+}
+  
+/* Modal Content/Box */
+.modal-content-save-word {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    /* max-width: 50%; */
+    height: 160px;
+
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto 60px;
+}
+
+.modal-content-save-word-input-text-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content-save-word-input-text-container input {
+    width: auto;
+}
+
+.modal-content-trans-btns button {
+    width: 80px;
 }
