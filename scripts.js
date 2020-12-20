@@ -84,17 +84,16 @@ logic = {
         $('.modal-trans').hide();
     },
 
-    onClickOnTransBox: function(e) {
+    onClickSaveBtn: function(e) {
         logic.hideTransbox();
 
         e.stopPropagation();
         e.preventDefault();
     },
 
-    onClickSaveBtn: function(e) {
-        //console.log(document.getElementById('transWeb').contentWindow.document.body.innerHTML)
-        //console.log(document.getElementsByTagName('html')[0].innerHTML);
-        
+    onClickCancelBtn: function(e) {
+        logic.hideTransbox();
+
         e.stopPropagation();
         e.preventDefault();
     },
@@ -107,6 +106,15 @@ logic = {
             isMobile = true;
         }
         return isMobile;
+    },
+
+    onTime500: function(e) {
+        console.log('time up')
+        if (!logic.isMobile()) {
+            return;
+        }
+
+        logic.getSelection()
     }
 }
 
@@ -138,6 +146,7 @@ $( document ).ready(function() {
         $('.modal-content-trans').on('touchend', logic.onClickOnTransBox);
         $('.modal-trans').on('touchend', logic.onClickOnTransBox);
         $('#saveBtn').on('touchend', logic.onClickSaveBtn);
+        $('#cancelBtn').on('touchend', logic.onClickCancelBtn);
 
         $('.modal-content').addClass('modal-content-mobile')
 
@@ -147,7 +156,9 @@ $( document ).ready(function() {
         $('.modal-content-trans').on('click', logic.onClickOnTransBox);
         $('.modal-trans').on('click', logic.onClickOnTransBox);
         $('#saveBtn').on('click', logic.onClickSaveBtn);
+        $('#cancelBtn').on('click', logic.onClickCancelBtn);
     }
 });
 
 
+window.setInterval(logic.onTime500, 800);
