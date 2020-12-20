@@ -22,23 +22,32 @@ logic = {
                 end: activeElement.selectionEnd
             }
 
-            if (activeElement.selectionStart != activeElement.selectionEnd) {
+            logic.getSelection(activeElement, e)
+        }
+    },
 
-                var selectedText = activeElement.value.substring(activeElement.selectionStart,  activeElement.selectionEnd);
-                
-                selectedText = selectedText.substring(0, 20)
+    getSelection: function(activeElement, e) {
+        if (!activeElement) {
+            activeElement = document.getElementById('readBox')
+        }
 
-                logic.showMinibox();
-                var clRect = document.getElementsByClassName('modal-content')[0].getBoundingClientRect();
-                
-                document.getElementById('selectedText').innerHTML = selectedText;
-                console.log(e.offsetY , e.offsetX)
-                if (e.offsetY && e.offsetX) {
-                    $('.modal-content').css('top', e.offsetY + 20)
-                    $('.modal-content').css('left', e.offsetX - clRect.width/2)
-                }
-                
-            }
+        if (activeElement.selectionStart == activeElement.selectionEnd) {
+            return;
+        }
+
+        var selectedText = activeElement.value.substring(activeElement.selectionStart,  activeElement.selectionEnd);
+            
+        selectedText = selectedText.substring(0, 20)
+
+        logic.showMinibox();
+        var clRect = document.getElementsByClassName('modal-content')[0].getBoundingClientRect();
+        
+        document.getElementById('selectedText').innerHTML = selectedText;
+        
+        if (e && e.offsetY && e.offsetX) {
+            console.log(e.offsetY , e.offsetX)
+            $('.modal-content').css('top', e.offsetY + 20)
+            $('.modal-content').css('left', e.offsetX - clRect.width/2)
         }
     },
 
