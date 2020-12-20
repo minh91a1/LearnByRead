@@ -84,14 +84,14 @@ logic = {
         $('.modal-trans').hide();
     },
 
-    onClickOnTransBox: function() {
+    onClickOnTransBox: function(e) {
         logic.hideTransbox();
 
         e.stopPropagation();
         e.preventDefault();
     },
 
-    onClickSaveBtn: function() {
+    onClickSaveBtn: function(e) {
         //console.log(document.getElementById('transWeb').contentWindow.document.body.innerHTML)
         //console.log(document.getElementsByTagName('html')[0].innerHTML);
         
