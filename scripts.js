@@ -36,10 +36,6 @@ logic = {
                 if (e.offsetY && e.offsetX) {
                     $('.modal-content').css('top', e.offsetY + 20)
                     $('.modal-content').css('left', e.offsetX - clRect.width/2)
-                } else {
-                    $('.modal-content').css('top', '50vh')
-                    $('.modal-content').css('right', 20)
-                    $('.modal-content').css('left', 'auto')
                 }
                 
             }
@@ -59,7 +55,9 @@ logic = {
     },
 
     hideMinibox: function() {
-        $('.modal-content').hide();
+        if (!logic.isMobile()) {
+            $('.modal-content').hide();
+        }
     },
     
     showTransbox: function(word) {
@@ -131,6 +129,8 @@ $( document ).ready(function() {
         $('.modal-content-trans').on('touchend', logic.onClickOnTransBox);
         $('.modal-trans').on('touchend', logic.onClickOnTransBox);
         $('#saveBtn').on('touchend', logic.onClickSaveBtn);
+
+        $('.modal-content').addClass('modal-content-mobile')
 
     } else {
         console.log('desktop?')

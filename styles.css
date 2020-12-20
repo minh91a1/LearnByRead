@@ -54,7 +54,6 @@ body {
     color: white;
     border-radius: 0.2rem;
     
-
     width: auto;
     height: auto;
 
@@ -72,6 +71,13 @@ body {
     overflow: hidden;
 }
 
+.modal-content-mobile {
+    opacity: 0.5;
+
+    top: 60vh;
+    right: 10vw;
+    left: auto;
+}
 
 
 /* The Modal (background) */
