@@ -1,5 +1,6 @@
 logic = {
     lastMaziiURL: '',
+    lastSaveWord: '',
 
     changeFontSize: function(val) {
         var currentFont = parseInt($('#readBox').css('font-size').split('px')[0])
@@ -70,14 +71,39 @@ logic = {
     },
     
     showTransbox: function(word) {
-        var newMaziiURL = 'https://mazii.net/search?dict=javi&type=w&query='+ word +'&hl==vi-VN';
 
-        if  (logic.lastMaziiURL != newMaziiURL) {
-            document.getElementById('transWeb').src = newMaziiURL;
-            logic.lastMaziiURL = newMaziiURL;
-        }
-        
-        $('.modal-trans').show();
+        fb.getSingle_Words_FromDb(word, (data) => {
+            var readFromDb = false
+            if (data) {
+                if (confirm("Word exists! Read from Firebase ?")) {
+                    readFromDb = true
+                } else {
+                    readFromDb = false
+                }
+            }
+
+            if (readFromDb) {
+                if (data) {
+                    document.getElementById('pronunciationTextbox').value = data.read
+                    document.getElementById('hantuTextbox').value = data.hantu
+                    document.getElementById('meanTextbox').value = data.mean
+                }
+    
+                logic.lastSaveWord = word
+                $('.modal-save-word').show();
+            } else {
+                var newMaziiURL = 'https://mazii.net/search?dict=javi&type=w&query='+ word +'&hl==vi-VN';
+
+                if  (logic.lastMaziiURL != newMaziiURL) {
+                    document.getElementById('transWeb').src = newMaziiURL;
+                    logic.lastMaziiURL = newMaziiURL;
+                }
+                
+                $('.modal-trans').show();
+            }
+
+        });
+
     },
 
     hideTransbox: function() {
@@ -86,13 +112,20 @@ logic = {
 
     showSaveWordBox: function() {
         var word = document.getElementById('selectedText').innerHTML;
+        if (logic.lastSaveWord = word) {
+            document.getElementById('pronunciationTextbox').value = ''
+            document.getElementById('hantuTextbox').value = ''
+            document.getElementById('meanTextbox').value = ''
+        }
+
         fb.getSingle_Words_FromDb(word, (data) => {
             if (data) {
                 document.getElementById('pronunciationTextbox').value = data.read
                 document.getElementById('hantuTextbox').value = data.hantu
-                document.getElementById('meanTextbox').value = data.mean                
+                document.getElementById('meanTextbox').value = data.mean       
             }
 
+            logic.lastSaveWord = word
             $('.modal-save-word').show();
         });
     },

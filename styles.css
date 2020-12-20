@@ -160,10 +160,13 @@ iframe {
 .modal-content-save-word-input-text-container {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content-save-word-input-text-container input {
-    width: auto;
+    min-width: 0;
+    text-align: center;
 }
 
 .modal-content-trans-btns button {
