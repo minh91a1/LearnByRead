@@ -26,6 +26,13 @@ fb = {
         });
     },
 
+    update__Infos_Basic__ToDb: function(data) {
+        const db = firebase.firestore();
+        var infors = db.collection("infors");
+
+        infors.doc("basic").update(data)
+    },
+
     set__Words__ToDb: function(word, data) {
 
         const db = firebase.firestore();

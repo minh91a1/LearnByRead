@@ -12,7 +12,7 @@
 <body>
 
     <div id="controlContainer">
-        <button id="myWords" class="ctrl-btn">WORDS</button>
+        <button id="bookmark" class="ctrl-btn">BOOKMARK</button>
         <button id="saveToServer" class="ctrl-btn">SAVE</button>
         <button id="smallerFont" class="ctrl-btn">-</button>
         FONT
@@ -49,12 +49,12 @@
         <!-- Modal content -->
         <div class="modal-content-save-word">
             <div class="modal-content-save-word-input-text-container">
-                <span>Pronunciation</span>
+                <span>Cách đọc</span>
                 <input id="pronunciationTextbox" type="text" />
-                <span>Han tu</span>
+                <span>Hán tự</span>
                 <input id="hantuTextbox" type="text" />
-                <span>Meaning</span>
-                <input id="meanTextbox" type="text" />
+                <span>Nghĩa</span>
+                <div id="meanTextbox" contenteditable></div>
             </div>
             <div class="modal-content-trans-btns">
                 <button id="clearWordBtn">Clear</button>

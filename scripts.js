@@ -83,14 +83,8 @@ logic = {
             }
 
             if (readFromDb) {
-                if (data) {
-                    document.getElementById('pronunciationTextbox').value = data.read
-                    document.getElementById('hantuTextbox').value = data.hantu
-                    document.getElementById('meanTextbox').value = data.mean
-                }
-    
-                logic.lastSaveWord = word
-                $('.modal-save-word').show();
+                logic.showSaveWordBox(data)
+
             } else {
                 var newMaziiURL = 'https://mazii.net/search?dict=javi&type=w&query='+ word +'&hl==vi-VN';
 
@@ -110,24 +104,41 @@ logic = {
         $('.modal-trans').hide();
     },
 
-    showSaveWordBox: function() {
+    showSaveWordBox: function(existData) {
         var word = document.getElementById('selectedText').innerHTML;
-        if (logic.lastSaveWord = word) {
-            document.getElementById('pronunciationTextbox').value = ''
-            document.getElementById('hantuTextbox').value = ''
-            document.getElementById('meanTextbox').value = ''
+
+        if (logic.lastSaveWord != word) {
+            // clear previous data
+            logic.parseDataToSaveWordBox({ read: '', hantu: '', mean: '' })
         }
 
-        fb.getSingle_Words_FromDb(word, (data) => {
-            if (data) {
-                document.getElementById('pronunciationTextbox').value = data.read
-                document.getElementById('hantuTextbox').value = data.hantu
-                document.getElementById('meanTextbox').value = data.mean       
-            }
+        if (existData) {
+            logic.parseDataToSaveWordBox(existData)
 
+            // show the box
             logic.lastSaveWord = word
             $('.modal-save-word').show();
-        });
+
+        } else {
+            fb.getSingle_Words_FromDb(word, (data) => {
+                logic.parseDataToSaveWordBox(data)
+
+                // show the box
+                logic.lastSaveWord = word
+                $('.modal-save-word').show();
+            });
+        }
+    
+    },
+
+    parseDataToSaveWordBox: function(data) {
+        if (!data) {
+            return
+        }
+
+        document.getElementById('pronunciationTextbox').value = data.read
+        document.getElementById('hantuTextbox').value = data.hantu
+        $('#meanTextbox').text(data.mean)
     },
 
     hideSaveWordBox: function() {
@@ -149,9 +160,8 @@ logic = {
     },
 
     onClickClearWordBtn: function(e) {
-        document.getElementById('pronunciationTextbox').value = ''
-        document.getElementById('hantuTextbox').value = ''
-        document.getElementById('meanTextbox').value = ''
+        logic.parseDataToSaveWordBox({ read: '', hantu: '', mean: '' })
+
         setTimeout(()=>{
             document.getElementById('pronunciationTextbox').focus()
         }, 200)
@@ -162,7 +172,7 @@ logic = {
 
         var pr = document.getElementById('pronunciationTextbox').value
         var ht = document.getElementById('hantuTextbox').value
-        var mn = document.getElementById('meanTextbox').value
+        var mn = $('#meanTextbox').text()
 
         if (pr != "" || mn != "") {
             console.log(pr,mn)
@@ -209,21 +219,59 @@ logic = {
 
     onClickSaveToServerBtn: function(e) {
         let textarea = document.getElementById('readBox');
-        let scrollTop = textarea.scrollTop;
         var currentFont = parseInt($('#readBox').css('font-size').split('px')[0])
 
-        fb.set__Infos_Basic__ToDb({
+        fb.update__Infos_Basic__ToDb({
             fontsize: currentFont,
-            scrolltop: scrollTop,
         });
 
+    },
+
+    onClickBookmarkBtn: function(e) {
+        const activeElement = document.getElementById('readBox')
+
+        if (activeElement.selectionStart == activeElement.selectionEnd) {
+            return;
+        }
+
+        fb.update__Infos_Basic__ToDb({
+            selectionStart: activeElement.selectionStart,
+            selectionEnd: activeElement.selectionEnd
+        });
+    },
+
+    scrollIntoSelection: function(selectionStart, selectionEnd) {
+        console.log('scrollIntoSelection', selectionStart, selectionEnd)
+        
+        if (!selectionStart || !selectionEnd) {
+            return;
+        }
+
+        let textArea = document.getElementById('readBox');
+
+        textArea.focus();
+
+        const fullText = textArea.value;
+        textArea.value = fullText.substring(0, selectionEnd);
+        const lastHeight = textArea.scrollHeight;
+        
+        setTimeout(() => {
+            textArea.value = fullText;
+            textArea.scrollTop = lastHeight - 100
+            textArea.setSelectionRange(selectionStart, selectionEnd);
+            logic.hideMinibox()
+        }, 100);
     },
 
     getDataFromDb: function() {
         fb.get__Infos_Basic__FromDb((data) => {
             let textarea = document.getElementById('readBox');
-            textarea.scrollTop = data.scrolltop
             $('#readBox').css('font-size', (data.fontsize) + 'px')
+
+            console.log('data selection: ',data.selectionStart, data.selectionEnd)
+
+            setTimeout(() => logic.scrollIntoSelection(data.selectionStart, data.selectionEnd), 100)
+            
         });
     }
 }
@@ -261,6 +309,8 @@ $( document ).ready(function() {
         
         $('#saveToServer').on('touchend', logic.onClickSaveToServerBtn);
 
+        $('#bookmark').on('touchend', logic.onClickBookmarkBtn);
+
         $('#clearWordBtn').on('touchend', logic.onClickClearWordBtn);
         $('#saveWordBtn').on('touchend', logic.onClickSaveWordBtn);
         $('#cancelSaveWordBtn').on('touchend', logic.onClickCancelSaveWordBtn);
@@ -278,15 +328,14 @@ $( document ).ready(function() {
         
         $('#saveToServer').on('click', logic.onClickSaveToServerBtn);
 
+        $('#bookmark').on('click', logic.onClickBookmarkBtn);
+
         $('#clearWordBtn').on('click', logic.onClickClearWordBtn);
         $('#saveWordBtn').on('click', logic.onClickSaveWordBtn);
         $('#cancelSaveWordBtn').on('click', logic.onClickCancelSaveWordBtn);
     }
 
-
     logic.getDataFromDb();
-
-    logic.showSaveWordBox()
 });
 
 
