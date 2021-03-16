@@ -20,14 +20,29 @@
     </div>
 
     <div id="readBoxContainer" class="box-sizing-border-box">
-        <textarea id="readBox" class="box-sizing-border-box" spellcheck="false" readonly></textarea>
+        <textarea id="readBox" class="box-sizing-border-box d-none" spellcheck="false" readonly></textarea>
 
+        <!--MY TEXT AREA-->
+        <div id="myTextAreaContainer">
+            <div id="myTextArea">
+            </div>
+        </div>
 
         <!-- Modal content -->
         <div id="selectedTextContainer" class="modal-content">
             <span id="selectedText"></span>
         </div>
     </div>
+
+    <div id="botControlContainer">
+        <button id="prevPageBtn" class="bot-ctrl-btn">PREV</button>
+        <button id="nextPageBtn" class="bot-ctrl-btn">NEXT</button>
+
+        <button id="transBtn" class="bot-ctrl-btn ml-5">TRANS</button>
+    </div>
+
+
+
 
     <!-- The Modal Translate -->
     <div class="modal-trans">

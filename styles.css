@@ -1,10 +1,11 @@
 body {
     margin: 0;
+    background-color: #222;
 }
 
 #readBoxContainer {
     width: 100vw;
-    height: 80vh;
+    height: 75vh;
     position: relative;
 }
 
@@ -37,6 +38,15 @@ body {
 
 .ctrl-btn {
     margin: 0 0.5rem;
+}
+
+.bot-ctrl-btn {
+    margin: 6px 0.5rem;
+    height: 40px;
+}
+
+.ml-5 {
+    margin-left: 80px;
 }
   
 /* Modal Content/Box */
@@ -179,4 +189,65 @@ iframe {
 #meanTextbox {
     height: 50px;
     width: 100%;
+}
+
+.d-none {
+    display: none;
+}
+
+#myTextAreaContainer {
+    width: 100%;
+    height: 100%;
+
+    position: relative;
+
+    background-color: #222;
+}
+
+#myTextArea {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+
+    cursor: pointer;
+    touch-action: none;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: peru;
+}
+
+#myTextArea span {
+    width: 22px;
+    height: 26px;
+    margin: 0px;
+    background-color: wheat;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+}
+
+#myTextArea span.selected-1st {
+    color: white;
+    background-color: orange;
+}
+
+#myTextArea span.selected {
+    color: white;
+    background-color: dodgerblue;
+}
+
+*:not(input):not(textarea) {
+    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+    user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+}
+
+#botControlContainer {
+    display: flex;
+    justify-content: center;
 }

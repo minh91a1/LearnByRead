@@ -1,60 +1,62 @@
 logic = {
     lastMaziiURL: '',
     lastSaveWord: '',
+    maxPanelNum: 0,
 
     changeFontSize: function(val) {
         var currentFont = parseInt($('#readBox').css('font-size').split('px')[0])
         $('#readBox').css('font-size', (currentFont + val) + 'px')
     },
 
-    handleSelection: function(e) {
+    // handleSelection: function(e) {
         
-        var allowHandleSelection = ['readBox','selectedTextContainer','selectedText'];
-        if (allowHandleSelection.indexOf(e.target.id) == -1) {
-            return;
-        }
+    //     var allowHandleSelection = ['readBox','selectedTextContainer','selectedText'];
+    //     if (allowHandleSelection.indexOf(e.target.id) == -1) {
+    //         return;
+    //     }
         
-        const activeElement = document.getElementById('readBox')
-        logic.hideMinibox();
+    //     const activeElement = document.getElementById('readBox')
+    //     logic.hideMinibox();
 
-        if (activeElement && activeElement.id === 'readBox') {
-            const range = {
-                start: activeElement.selectionStart,
-                end: activeElement.selectionEnd
-            }
+    //     if (activeElement && activeElement.id === 'readBox') {
+    //         const range = {
+    //             start: activeElement.selectionStart,
+    //             end: activeElement.selectionEnd
+    //         }
 
-            logic.getSelection(activeElement, e)
-        }
-    },
+    //         logic.getSelection(activeElement, e)
+    //     }
+    // },
 
-    getSelection: function(activeElement, e) {
-        if (!activeElement) {
-            activeElement = document.getElementById('readBox')
-        }
+    // getSelection: function(activeElement, e) {
+    //     if (!activeElement) {
+    //         activeElement = document.getElementById('readBox')
+    //     }
 
-        if (activeElement.selectionStart == activeElement.selectionEnd) {
-            return;
-        }
+    //     if (activeElement.selectionStart == activeElement.selectionEnd) {
+    //         return;
+    //     }
 
-        var selectedText = activeElement.value.substring(activeElement.selectionStart,  activeElement.selectionEnd);
+    //     var selectedText = activeElement.value.substring(activeElement.selectionStart,  activeElement.selectionEnd);
             
-        selectedText = selectedText.substring(0, 20)
+    //     selectedText = selectedText.substring(0, 20)
 
-        logic.showMinibox();
-        var clRect = document.getElementsByClassName('modal-content')[0].getBoundingClientRect();
+    //     logic.showMinibox();
+    //     var clRect = document.getElementsByClassName('modal-content')[0].getBoundingClientRect();
         
-        document.getElementById('selectedText').innerHTML = selectedText;
+    //     document.getElementById('selectedText').innerHTML = selectedText;
         
-        if (e && e.offsetY && e.offsetX) {
-            console.log(e.offsetY , e.offsetX)
-            $('.modal-content').css('top', e.offsetY + 20)
-            $('.modal-content').css('left', e.offsetX - clRect.width/2)
-        }
-    },
+    //     if (e && e.offsetY && e.offsetX) {
+    //         console.log(e.offsetY , e.offsetX)
+    //         $('.modal-content').css('top', e.offsetY + 20)
+    //         $('.modal-content').css('left', e.offsetX - clRect.width/2)
+    //     }
+    // },
 
     onClickOnMinibox: function(e) {
         logic.hideMinibox();
-        logic.showTransbox(document.getElementById('selectedText').innerHTML);
+        //logic.showTransbox(document.getElementById('selectedText').innerHTML);
+        logic.showTransbox(selectionMan.getSelectedText());
 
         e.stopPropagation();
         e.preventDefault();
@@ -65,13 +67,10 @@ logic = {
     },
 
     hideMinibox: function() {
-        if (!logic.isMobile()) {
-            $('.modal-content').hide();
-        }
+        $('.modal-content').hide();
     },
     
     showTransbox: function(word) {
-
         fb.getSingle_Words_FromDb(word, (data) => {
             var readFromDb = false
             if (data) {
@@ -208,15 +207,6 @@ logic = {
         return isMobile;
     },
 
-    onTime500: function(e) {
-        console.log('time up')
-        if (!logic.isMobile()) {
-            return;
-        }
-
-        logic.getSelection()
-    },
-
     onClickSaveToServerBtn: function(e) {
         let textarea = document.getElementById('readBox');
         var currentFont = parseInt($('#readBox').css('font-size').split('px')[0])
@@ -273,6 +263,104 @@ logic = {
             setTimeout(() => logic.scrollIntoSelection(data.selectionStart, data.selectionEnd), 100)
             
         });
+    },
+
+    savePageIndexToDb: function(pageIndex) {
+        fb.update__Infos_Basic__ToDb({
+            pageIndex: pageIndex,
+        });
+    },
+
+    loadPageIndexFromDb: function() {
+        fb.get__Infos_Basic__FromDb((data) => {
+            if (data && data.pageIndex) {
+                let pageIndex = data.pageIndex
+                var startIndex = pageIndex * logic.maxPanelNum
+                var endIndex = startIndex + logic.maxPanelNum
+                endIndex = Math.min(endIndex, Data.text.length)
+        
+                for (let index = startIndex; index < endIndex; index++) {
+                    const element = Data.text[index];
+                    
+                    var letterPanel = document.getElementById('' + index - startIndex)
+                    letterPanel.innerText = element
+                }
+        
+                for (let index = endIndex - startIndex; index < logic.maxPanelNum; index++) {
+                    var letterPanel = document.getElementById(''+index)
+                    letterPanel.innerText = ''
+                }
+            }
+        });
+    },
+}
+
+selectionMan = {
+    canSelect: false,
+    firstSelectedId: -1,
+    lastSelectedId: -1,
+
+    pointerDown: function(e) {
+        elementFromPoint = document.elementFromPoint(e.pageX - window.pageXOffset, e.pageY - window.pageYOffset);
+        if (elementFromPoint) {
+            if (elementFromPoint.parentNode.id != 'myTextArea') {
+                return
+            }
+
+            if ($('.selected').length > 0) {
+                $('.selected').removeClass('selected')
+                $('.selected-1st').removeClass('selected-1st')
+                //return
+            }
+    
+            if (selectionMan.canSelect == true) {
+                return
+            }
+    
+            elementFromPoint.classList.add('selected')
+            elementFromPoint.classList.add('selected-1st')
+            selectionMan.canSelect = true
+            selectionMan.firstSelectedId = elementFromPoint.id
+        }
+    },
+
+    pointerMove: function(e) {
+        elementFromPoint = document.elementFromPoint(e.pageX - window.pageXOffset, e.pageY - window.pageYOffset);
+        if (elementFromPoint) {
+            if (selectionMan.canSelect) {
+                $('.selected').removeClass('selected')
+                elementFromPoint.classList.add('selected')
+    
+                var startId = Math.min(selectionMan.firstSelectedId, elementFromPoint.id)
+                var endId = Math.max(selectionMan.firstSelectedId, elementFromPoint.id)
+                for (let i = startId; i <= endId; i++) {
+                    $('#'+i)[0].classList.add('selected')
+                }
+            }
+        }
+    },
+
+    pointerUp: function(e) {
+        selectionMan.canSelect = false
+
+        elementFromPoint = document.elementFromPoint(e.pageX - window.pageXOffset, e.pageY - window.pageYOffset);
+        if (elementFromPoint.parentNode.id != 'myTextArea') {
+            return
+        }
+        selectionMan.lastSelectedId = elementFromPoint.id
+    },
+
+    getSelectedText: function() {
+        let startIndex = Math.min(selectionMan.firstSelectedId, selectionMan.lastSelectedId)
+        let endIndex = Math.max(selectionMan.firstSelectedId, selectionMan.lastSelectedId)
+
+        let selectedText = ''
+        for (let index = startIndex; index <= endIndex; index++) {
+            var letterPanel = document.getElementById('' + index)
+            selectedText += letterPanel.innerText
+        }
+
+        return selectedText
     }
 }
 
@@ -292,9 +380,6 @@ $( document ).ready(function() {
         if(e.target.nodeName == "TEXTAREA")
              e.preventDefault();
     });
-
-    document.getElementsByTagName('body')[0].addEventListener('mouseup', logic.handleSelection)
-    document.getElementsByTagName('body')[0].addEventListener('touchend', logic.handleSelection)
 
     logic.hideMinibox();
 
@@ -336,7 +421,121 @@ $( document ).ready(function() {
     }
 
     logic.getDataFromDb();
+    
+    // MY TEXT AREA CONTAINER
+    var containerPanel = document.getElementById('myTextAreaContainer')
+    var containerPanelWidth = containerPanel.offsetWidth
+    var containerPanelHeight = containerPanel.offsetHeight
+
+    console.log("container size: ",containerPanelWidth, containerPanelHeight)
+
+    // build MY TEXT AREA
+    var textArea = document.getElementById('myTextArea')
+    textArea.style.width = "340px"
+    textArea.style.height = "450px"
+
+    // SET MINI BOX POSITION
+    logic.showMinibox();
+    var rectContainerPanel = containerPanel.getBoundingClientRect();
+    var rect = textArea.getBoundingClientRect();
+    console.log('rect: ',rect)
+    $('.modal-content').css('top', rect.y + rect.height - rectContainerPanel.y)
+    $('.modal-content').css('left', rect.x + rect.width - 40)
+
+    var demoData = Data.text
+
+    var margin = 0
+    var panelWidth = 22 + 2*margin
+    var panelHeight = 26 + 2*margin
+    var fontSize = 20
+
+    var panelXNum = Math.floor(textArea.offsetWidth / panelWidth)
+    var panelYNum = Math.floor(textArea.offsetHeight / panelHeight)
+
+    console.log(textArea.offsetWidth, textArea.offsetHeight)
+
+    var maxPanelNum = panelXNum*panelYNum
+    logic.maxPanelNum = maxPanelNum
+    var maxPageCount = Math.ceil(demoData.length / maxPanelNum)
+
+    var pageIndex = 0
+    var startIndex = pageIndex*maxPanelNum
+    var endIndex = startIndex + maxPanelNum
+    endIndex = Math.min(endIndex, demoData.length)
+
+    for (let index = startIndex; index < endIndex; index++) {
+        const element = demoData[index];
+        
+        var letterPanel = document.createElement('span')
+        letterPanel.id = index
+        letterPanel.innerText = element
+        letterPanel.style.fontSize  = fontSize + "px"
+
+        textArea.appendChild(letterPanel)
+    }
+
+    logic.loadPageIndexFromDb()
+
+    // MOUSE DOWN
+    document.addEventListener('pointerdown', selectionMan.pointerDown)
+
+    // MOUSE MOVING
+    document.addEventListener('pointermove', selectionMan.pointerMove)
+
+    // MOUSE UP
+    document.addEventListener('pointerup', selectionMan.pointerUp)
+
+    // PREV PAGE
+    document.getElementById('prevPageBtn').addEventListener('click', function() {
+        pageIndex -= 1
+        if (pageIndex < 0) {
+            pageIndex = 0
+        }
+
+        var startIndex = pageIndex*maxPanelNum
+        var endIndex = startIndex + maxPanelNum
+        endIndex = Math.min(endIndex, demoData.length)
+
+        for (let index = startIndex; index < endIndex; index++) {
+            const element = demoData[index];
+            
+            var letterPanel = document.getElementById(''+index-startIndex)
+            letterPanel.innerText = element
+        }
+
+        logic.savePageIndexToDb(pageIndex)
+    })
+
+    // NEXT PAGE
+    document.getElementById('nextPageBtn').addEventListener('click', function() {
+        pageIndex += 1
+        if (pageIndex > maxPageCount - 1) {
+            pageIndex = maxPageCount - 1
+        }
+
+        var startIndex = pageIndex*maxPanelNum
+        var endIndex = startIndex + maxPanelNum
+        endIndex = Math.min(endIndex, demoData.length)
+
+        for (let index = startIndex; index < endIndex; index++) {
+            const element = demoData[index];
+            
+            var letterPanel = document.getElementById('' + index - startIndex)
+            letterPanel.innerText = element
+        }
+
+        for (let index = endIndex - startIndex; index < maxPanelNum; index++) {
+            var letterPanel = document.getElementById(''+index)
+            letterPanel.innerText = ''
+        }
+
+        logic.savePageIndexToDb(pageIndex)
+    })
+
+    // TRANS
+    document.getElementById('transBtn').addEventListener('click', function() {
+        logic.hideMinibox();
+        logic.showTransbox(selectionMan.getSelectedText());        
+    })
 });
 
-
-window.setInterval(logic.onTime500, 800);
