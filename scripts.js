@@ -104,7 +104,7 @@ logic = {
     },
 
     showSaveWordBox: function(existData) {
-        var word = document.getElementById('selectedText').innerHTML;
+        var word = selectionMan.getSelectedText();
 
         if (logic.lastSaveWord != word) {
             // clear previous data
@@ -167,7 +167,7 @@ logic = {
     },
 
     onClickSaveWordBtn: function(e) {
-        var word = document.getElementById('selectedText').innerHTML;
+        var word = selectionMan.getSelectedText();
 
         var pr = document.getElementById('pronunciationTextbox').value
         var ht = document.getElementById('hantuTextbox').value
