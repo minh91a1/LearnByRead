@@ -2,6 +2,7 @@ logic = {
     lastMaziiURL: '',
     lastSaveWord: '',
     maxPanelNum: 0,
+    currentPage: 0,
 
     changeFontSize: function(val) {
         var currentFont = parseInt($('#readBox').css('font-size').split('px')[0])
@@ -275,6 +276,8 @@ logic = {
         fb.get__Infos_Basic__FromDb((data) => {
             if (data && data.pageIndex) {
                 let pageIndex = data.pageIndex
+                logic.currentPage = pageIndex
+                
                 var startIndex = pageIndex * logic.maxPanelNum
                 var endIndex = startIndex + logic.maxPanelNum
                 endIndex = Math.min(endIndex, Data.text.length)
@@ -458,7 +461,7 @@ $( document ).ready(function() {
     logic.maxPanelNum = maxPanelNum
     var maxPageCount = Math.ceil(demoData.length / maxPanelNum)
 
-    var pageIndex = 0
+    var pageIndex = logic.currentPage
     var startIndex = pageIndex*maxPanelNum
     var endIndex = startIndex + maxPanelNum
     endIndex = Math.min(endIndex, demoData.length)
@@ -487,12 +490,12 @@ $( document ).ready(function() {
 
     // PREV PAGE
     document.getElementById('prevPageBtn').addEventListener('click', function() {
-        pageIndex -= 1
-        if (pageIndex < 0) {
-            pageIndex = 0
+        logic.currentPage -= 1
+        if (logic.currentPage < 0) {
+            logic.currentPage = 0
         }
 
-        var startIndex = pageIndex*maxPanelNum
+        var startIndex = logic.currentPage*maxPanelNum
         var endIndex = startIndex + maxPanelNum
         endIndex = Math.min(endIndex, demoData.length)
 
@@ -503,17 +506,17 @@ $( document ).ready(function() {
             letterPanel.innerText = element
         }
 
-        logic.savePageIndexToDb(pageIndex)
+        logic.savePageIndexToDb(logic.currentPage)
     })
 
     // NEXT PAGE
     document.getElementById('nextPageBtn').addEventListener('click', function() {
-        pageIndex += 1
-        if (pageIndex > maxPageCount - 1) {
-            pageIndex = maxPageCount - 1
+        logic.currentPage += 1
+        if (logic.currentPage > maxPageCount - 1) {
+            logic.currentPage = maxPageCount - 1
         }
 
-        var startIndex = pageIndex*maxPanelNum
+        var startIndex = logic.currentPage*maxPanelNum
         var endIndex = startIndex + maxPanelNum
         endIndex = Math.min(endIndex, demoData.length)
 
@@ -529,7 +532,7 @@ $( document ).ready(function() {
             letterPanel.innerText = ''
         }
 
-        logic.savePageIndexToDb(pageIndex)
+        logic.savePageIndexToDb(logic.currentPage)
     })
 
     // TRANS
