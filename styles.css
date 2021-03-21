@@ -219,6 +219,7 @@ iframe {
     transform: translate(-50%, -50%);
 
     background-color: peru;
+    border-radius: 2px;
 }
 
 #myTextArea span {
