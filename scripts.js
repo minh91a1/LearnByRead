@@ -75,11 +75,12 @@ logic = {
         fb.getSingle_Words_FromDb(word, (data) => {
             var readFromDb = false
             if (data) {
-                if (confirm("Word exists! Read from Firebase ?")) {
-                    readFromDb = true
-                } else {
-                    readFromDb = false
-                }
+                // if (confirm("Word exists! Read from Firebase ?")) {
+                //     readFromDb = true
+                // } else {
+                //     readFromDb = false
+                // }
+                readFromDb = true
             }
 
             if (readFromDb) {
@@ -539,6 +540,20 @@ $( document ).ready(function() {
     document.getElementById('transBtn').addEventListener('click', function() {
         logic.hideMinibox();
         logic.showTransbox(selectionMan.getSelectedText());        
+    })
+
+    // TRANS
+    document.getElementById('maziiBtn').addEventListener('click', function() {
+        logic.hideSaveWordBox()
+
+        var newMaziiURL = 'https://mazii.net/search?dict=javi&type=w&query='+ selectionMan.getSelectedText() +'&hl==vi-VN';
+
+        if  (logic.lastMaziiURL != newMaziiURL) {
+            document.getElementById('transWeb').src = newMaziiURL;
+            logic.lastMaziiURL = newMaziiURL;
+        }
+        
+        $('.modal-trans').show();
     })
 });
 
