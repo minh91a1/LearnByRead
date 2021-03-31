@@ -12,11 +12,12 @@
 <body>
 
     <div id="controlContainer">
-        <button id="bookmark" class="ctrl-btn">BOOKMARK</button>
-        <button id="saveToServer" class="ctrl-btn">SAVE</button>
-        <button id="smallerFont" class="ctrl-btn">-</button>
-        FONT
-        <button id="largerFont" class="ctrl-btn">+</button>
+        <select id="selectReadItem"></select>
+        <!-- <button id="bookmark" class="ctrl-btn">BOOKMARK</button> -->
+        <!-- <button id="saveToServer" class="ctrl-btn">SAVE</button> -->
+        <!-- <button id="smallerFont" class="ctrl-btn">-</button> -->
+        <!-- FONT -->
+        <!-- <button id="largerFont" class="ctrl-btn">+</button> -->
     </div>
 
     <div id="readBoxContainer" class="box-sizing-border-box">
@@ -119,7 +120,7 @@
         var appFB = firebase.initializeApp(firebaseConfig);
     </script>
 
-    <script src="simpledata.js"></script>
+    <script src="data.js"></script>
     <script src="firebase.js"></script>
     <script src="scripts.js"></script>
 </body>

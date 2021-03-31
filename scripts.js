@@ -3,56 +3,15 @@ logic = {
     lastSaveWord: '',
     maxPanelNum: 0,
     currentPage: 0,
+    mapPageIndexToReadItem: {},
+    currentData: '',
+    maxPageCount: 0,
+    maxPageNum: 0,
 
     changeFontSize: function(val) {
         var currentFont = parseInt($('#readBox').css('font-size').split('px')[0])
         $('#readBox').css('font-size', (currentFont + val) + 'px')
     },
-
-    // handleSelection: function(e) {
-        
-    //     var allowHandleSelection = ['readBox','selectedTextContainer','selectedText'];
-    //     if (allowHandleSelection.indexOf(e.target.id) == -1) {
-    //         return;
-    //     }
-        
-    //     const activeElement = document.getElementById('readBox')
-    //     logic.hideMinibox();
-
-    //     if (activeElement && activeElement.id === 'readBox') {
-    //         const range = {
-    //             start: activeElement.selectionStart,
-    //             end: activeElement.selectionEnd
-    //         }
-
-    //         logic.getSelection(activeElement, e)
-    //     }
-    // },
-
-    // getSelection: function(activeElement, e) {
-    //     if (!activeElement) {
-    //         activeElement = document.getElementById('readBox')
-    //     }
-
-    //     if (activeElement.selectionStart == activeElement.selectionEnd) {
-    //         return;
-    //     }
-
-    //     var selectedText = activeElement.value.substring(activeElement.selectionStart,  activeElement.selectionEnd);
-            
-    //     selectedText = selectedText.substring(0, 20)
-
-    //     logic.showMinibox();
-    //     var clRect = document.getElementsByClassName('modal-content')[0].getBoundingClientRect();
-        
-    //     document.getElementById('selectedText').innerHTML = selectedText;
-        
-    //     if (e && e.offsetY && e.offsetX) {
-    //         console.log(e.offsetY , e.offsetX)
-    //         $('.modal-content').css('top', e.offsetY + 20)
-    //         $('.modal-content').css('left', e.offsetX - clRect.width/2)
-    //     }
-    // },
 
     onClickOnMinibox: function(e) {
         logic.hideMinibox();
@@ -268,34 +227,115 @@ logic = {
     },
 
     savePageIndexToDb: function(pageIndex) {
+        logic.mapPageIndexToReadItem[logic.getCurrentDoc()] = pageIndex;
+
         fb.update__Infos_Basic__ToDb({
             pageIndex: pageIndex,
+            mapPageIndexToReadItem: logic.mapPageIndexToReadItem,
         });
     },
 
     loadPageIndexFromDb: function() {
         fb.get__Infos_Basic__FromDb((data) => {
-            if (data && data.pageIndex) {
-                let pageIndex = data.pageIndex
-                logic.currentPage = pageIndex
+            if (data) {
+                console.log('update complete:', data.currentDoc)
+                // map
+                
+                if (!data.mapPageIndexToReadItem) {
+                    logic.mapPageIndexToReadItem = {}
+                } else {
+                    logic.mapPageIndexToReadItem = data.mapPageIndexToReadItem
+                }
+
+                // current doc
+                if (data.currentDoc) {
+                    logic.setCurrentDoc(data.currentDoc);
+                } else {
+                    data.currentDoc = logic.getCurrentDoc();
+                }
+
+                
+
+                // set data
+                if (data.currentDoc in logic.mapPageIndexToReadItem) {
+                    logic.currentPage = logic.mapPageIndexToReadItem[data.currentDoc]
+                } else {
+                    logic.mapPageIndexToReadItem[data.currentDoc] = 0
+                    logic.currentPage = 0
+                }
+
+                let pageIndex = logic.currentPage
                 
                 var startIndex = pageIndex * logic.maxPanelNum
                 var endIndex = startIndex + logic.maxPanelNum
-                endIndex = Math.min(endIndex, Data.text.length)
-        
-                for (let index = startIndex; index < endIndex; index++) {
-                    const element = Data.text[index];
-                    
-                    var letterPanel = document.getElementById('' + index - startIndex)
-                    letterPanel.innerText = element
-                }
-        
-                for (let index = endIndex - startIndex; index < logic.maxPanelNum; index++) {
-                    var letterPanel = document.getElementById(''+index)
-                    letterPanel.innerText = ''
-                }
+                endIndex = Math.min(endIndex, logic.currentData.length)
+
+                logic.buildReadDataPanel(false);
             }
         });
+    },
+
+    saveCurrentDocToDb: function(callback) {
+        fb.update__Infos_Basic__ToDb({
+            currentDoc: logic.getCurrentDoc(),
+        }, callback);
+    },
+
+    getCurrentDoc: function() {
+        var e = document.getElementById("selectReadItem");
+        var key = e.value;
+
+        return key;
+    },
+
+    setCurrentDoc: function(doc) {
+        var e = document.getElementById("selectReadItem");
+        e.value = doc;
+    },
+
+    buildReadDataPanel: function(isFirstTime) {
+        var textArea = document.getElementById('myTextArea')
+        
+        logic.currentData = GetReadItemData(logic.getCurrentDoc());
+
+        var margin = 0
+        var panelWidth = 22 + 2*margin
+        var panelHeight = 26 + 2*margin
+        var fontSize = 20
+
+        var panelXNum = Math.floor(textArea.offsetWidth / panelWidth)
+        var panelYNum = Math.floor(textArea.offsetHeight / panelHeight)
+
+        var maxPanelNum = panelXNum*panelYNum
+        logic.maxPanelNum = maxPanelNum
+        var maxPageCount = Math.ceil(logic.currentData.length / maxPanelNum)
+        logic.maxPageCount = maxPageCount
+
+        var pageIndex = logic.currentPage
+        var startIndex = pageIndex*maxPanelNum
+        var endIndex = startIndex + maxPanelNum
+        endIndex = Math.min(endIndex, logic.currentData.length)
+
+        for (let index = startIndex; index < endIndex; index++) {
+            const element = logic.currentData[index];
+            
+            if (isFirstTime) {
+                var letterPanel = document.createElement('span')
+                letterPanel.id = index
+                letterPanel.innerText = element
+                letterPanel.style.fontSize  = fontSize + "px"
+    
+                textArea.appendChild(letterPanel)
+            } else {
+                var letterPanel = document.getElementById('' + index - startIndex)
+                letterPanel.innerText = element
+            }
+        }
+
+        for (let index = endIndex - startIndex; index < maxPanelNum; index++) {
+            var letterPanel = document.getElementById(''+index)
+            letterPanel.innerText = ''
+        }
     },
 }
 
@@ -365,13 +405,11 @@ selectionMan = {
         }
 
         return selectedText
-    }
+    },
 }
 
 // A $( document ).ready() block.
 $( document ).ready(function() {
-    $('#readBox').val(Data.text)
-
     $('#smallerFont').on('click', function() {
         logic.changeFontSize(-1);
     })
@@ -424,6 +462,21 @@ $( document ).ready(function() {
         $('#cancelSaveWordBtn').on('click', logic.onClickCancelSaveWordBtn);
     }
 
+    // SELECTION
+    var x = document.getElementById("selectReadItem");
+    for (let i = 0; i < ReadItems.length; i++) {
+        const element = ReadItems[i];
+        var option = document.createElement("option");
+        option.text = element.key;
+        x.add(option);
+    }
+
+    $('#selectReadItem').on('change', function() {
+        logic.saveCurrentDocToDb(()=> {
+            logic.loadPageIndexFromDb()
+        });
+    });
+
     logic.getDataFromDb();
     
     // MY TEXT AREA CONTAINER
@@ -446,39 +499,7 @@ $( document ).ready(function() {
     $('.modal-content').css('top', rect.y + rect.height - rectContainerPanel.y)
     $('.modal-content').css('left', rect.x + rect.width - 40)
 
-    var demoData = Data.text
-
-    var margin = 0
-    var panelWidth = 22 + 2*margin
-    var panelHeight = 26 + 2*margin
-    var fontSize = 20
-
-    var panelXNum = Math.floor(textArea.offsetWidth / panelWidth)
-    var panelYNum = Math.floor(textArea.offsetHeight / panelHeight)
-
-    console.log(textArea.offsetWidth, textArea.offsetHeight)
-
-    var maxPanelNum = panelXNum*panelYNum
-    logic.maxPanelNum = maxPanelNum
-    var maxPageCount = Math.ceil(demoData.length / maxPanelNum)
-
-    var pageIndex = logic.currentPage
-    var startIndex = pageIndex*maxPanelNum
-    var endIndex = startIndex + maxPanelNum
-    endIndex = Math.min(endIndex, demoData.length)
-
-    for (let index = startIndex; index < endIndex; index++) {
-        const element = demoData[index];
-        
-        var letterPanel = document.createElement('span')
-        letterPanel.id = index
-        letterPanel.innerText = element
-        letterPanel.style.fontSize  = fontSize + "px"
-
-        textArea.appendChild(letterPanel)
-    }
-
-    logic.loadPageIndexFromDb()
+    logic.buildReadDataPanel(true);
 
     // MOUSE DOWN
     document.addEventListener('pointerdown', selectionMan.pointerDown)
@@ -496,12 +517,12 @@ $( document ).ready(function() {
             logic.currentPage = 0
         }
 
-        var startIndex = logic.currentPage*maxPanelNum
-        var endIndex = startIndex + maxPanelNum
-        endIndex = Math.min(endIndex, demoData.length)
+        var startIndex = logic.currentPage * logic.maxPanelNum
+        var endIndex = startIndex + logic.maxPanelNum
+        endIndex = Math.min(endIndex, logic.currentData.length)
 
         for (let index = startIndex; index < endIndex; index++) {
-            const element = demoData[index];
+            const element = logic.currentData[index];
             
             var letterPanel = document.getElementById(''+index-startIndex)
             letterPanel.innerText = element
@@ -513,22 +534,22 @@ $( document ).ready(function() {
     // NEXT PAGE
     document.getElementById('nextPageBtn').addEventListener('click', function() {
         logic.currentPage += 1
-        if (logic.currentPage > maxPageCount - 1) {
-            logic.currentPage = maxPageCount - 1
+        if (logic.currentPage > logic.maxPageCount - 1) {
+            logic.currentPage = logic.maxPageCount - 1
         }
 
-        var startIndex = logic.currentPage*maxPanelNum
-        var endIndex = startIndex + maxPanelNum
-        endIndex = Math.min(endIndex, demoData.length)
+        var startIndex = logic.currentPage * logic.maxPanelNum
+        var endIndex = startIndex + logic.maxPanelNum
+        endIndex = Math.min(endIndex, logic.currentData.length)
 
         for (let index = startIndex; index < endIndex; index++) {
-            const element = demoData[index];
+            const element = logic.currentData[index];
             
             var letterPanel = document.getElementById('' + index - startIndex)
             letterPanel.innerText = element
         }
 
-        for (let index = endIndex - startIndex; index < maxPanelNum; index++) {
+        for (let index = endIndex - startIndex; index < logic.maxPanelNum; index++) {
             var letterPanel = document.getElementById(''+index)
             letterPanel.innerText = ''
         }
@@ -555,5 +576,11 @@ $( document ).ready(function() {
         
         $('.modal-trans').show();
     })
+
+
+
+    // FINALLY LOAD FROM DB
+    logic.loadPageIndexFromDb();
+    
 });
 

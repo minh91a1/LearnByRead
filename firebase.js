@@ -26,11 +26,16 @@ fb = {
         });
     },
 
-    update__Infos_Basic__ToDb: function(data) {
+    update__Infos_Basic__ToDb: function(data, callback) {
         const db = firebase.firestore();
         var infors = db.collection("infors");
 
-        infors.doc("basic").update(data)
+        infors.doc("basic").update(data).then(function(doc){
+            
+            if (callback) {
+                callback()
+            }
+        })
     },
 
     set__Words__ToDb: function(word, data) {
