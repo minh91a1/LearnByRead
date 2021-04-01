@@ -195,6 +195,12 @@ iframe {
     display: none;
 }
 
+.invisible {
+    position: absolute;
+    height: 5px;
+    opacity: 0;
+}
+
 #myTextAreaContainer {
     width: 100%;
     height: 100%;

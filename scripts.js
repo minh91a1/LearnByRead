@@ -577,6 +577,14 @@ $( document ).ready(function() {
         $('.modal-trans').show();
     })
 
+    // COPY
+    document.getElementById('copyBtn').addEventListener('click', function() {
+        let copyText = document.getElementById('copyBox');
+        copyText.value = selectionMan.getSelectedText()
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); 
+        document.execCommand("copy");
+    })
 
 
     // FINALLY LOAD FROM DB
