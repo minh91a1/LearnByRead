@@ -1,4 +1,44 @@
 fb = {
+
+    update__Doc__To__Library: function(key, data, callback) {
+        const db = firebase.firestore();
+        var lib = db.collection("library");
+
+        // save the book!
+        lib.doc(key).set({
+            key: key,
+            data: data,
+        }).then(function() {
+            // now index that book!
+            var lib_index = db.collection("library_index");
+            lib_index.doc(key).set({
+                key: key,
+                ref_doc: db.collection("library").doc(key)
+            }).then(function() {
+                if (callback) {
+                    callback();
+                }
+            })
+        })
+
+    },
+
+
+    getAll__Docs__From__Library_Index: async function() {
+        const db = firebase.firestore();
+        var lib = db.collection("library_index");
+
+        const snapshot = await lib.get()
+        return snapshot.docs.map(doc => doc.data()).map(doc => doc.key);
+    },
+
+    get__Doc__From__Library: async function(key) {
+        const db = firebase.firestore();
+        var lib = await db.collection("library").doc(key).get();
+        return lib.data().data;
+    },
+
+
     set__Infos_Basic__ToDb: function(data) {
 
         const db = firebase.firestore();

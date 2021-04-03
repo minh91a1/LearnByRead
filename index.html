@@ -12,7 +12,9 @@
 <body>
 
     <div id="controlContainer">
+        <button id="addDocBtn" class="ctrl-btn">+</button>
         <select id="selectReadItem"></select>
+        <button id="delDocBtn" class="ctrl-btn">-</button>
         <!-- <button id="bookmark" class="ctrl-btn">BOOKMARK</button> -->
         <!-- <button id="saveToServer" class="ctrl-btn">SAVE</button> -->
         <!-- <button id="smallerFont" class="ctrl-btn">-</button> -->
@@ -44,7 +46,20 @@
         <button id="transBtn" class="bot-ctrl-btn ml-5">TRANS</button>
     </div>
 
+    <!-- The Modal Translate -->
+    <div class="modal-addDoc">
+        <!-- Modal content -->
+        <div class="modal-content-addDoc">
+            <input id="titleDoc" type="text">
+            <textarea id="dataDoc"></textarea>
 
+            <div class="modal-content-addDoc-btns">
+                <button id="saveDocBtn">Save</button>
+                <button id="cancelDocBtn">Cancel</button>
+            </div>
+        </div>
+
+    </div>
 
 
     <!-- The Modal Translate -->
@@ -52,7 +67,8 @@
 
         <!-- Modal content -->
         <div class="modal-content-trans">
-            <iframe id="transWeb" src=""></iframe>
+            <iframe id="transWeb" src="">
+            </iframe>
             <div class="modal-content-trans-btns">
                 <button id="saveBtn">Save</button>
                 <button id="cancelBtn">Cancel</button>
@@ -124,6 +140,8 @@
 
     <script src="data.js"></script>
     <script src="firebase.js"></script>
+    <script src="selectmanager.js"></script>
+    <script src="logic.js"></script>
     <script src="scripts.js"></script>
 </body>
 

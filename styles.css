@@ -33,7 +33,7 @@ body {
     padding: 1rem;
     padding-bottom: 0.5rem;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .ctrl-btn {
@@ -103,8 +103,8 @@ body {
     margin: 5% auto; /* 15% from the top and centered */
     padding: 2px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    height: 60vh;
+    width: 90vw; /* Could be more or less, depending on screen size */
+    height: 80vh;
 
     display: grid;
     grid-template-columns: auto;
@@ -263,4 +263,49 @@ iframe {
     
     width: 60px;
     height: 25px;
+}
+
+
+/* The Modal (background) */
+.modal-addDoc {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+  
+/* Modal Content/Box */
+.modal-content-addDoc {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 2px;
+    border: 1px solid #888;
+    width: 90vw; /* Could be more or less, depending on screen size */
+    height: 80vh;
+
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 20px auto 60px;
+}
+
+#dataDoc {
+    resize: none;
+}
+
+.modal-content-addDoc-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content-addDoc-btns button {
+    height: 40px;
+    margin: 0 0.5rem;
+    width: 120px;
 }
