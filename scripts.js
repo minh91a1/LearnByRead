@@ -156,7 +156,8 @@ $( document ).ready(async function() {
     // TRANS
     document.getElementById('transBtn').addEventListener('click', function() {
         logic.hideMinibox();
-        logic.showTransbox(selectionMan.getSelectedText());        
+        $('#wordToSave').text(selectionMan.getSelectedText())
+        logic.showTransbox(selectionMan.getSelectedText());
     })
 
     // TRANS
