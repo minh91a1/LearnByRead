@@ -123,6 +123,7 @@ $( document ).ready(async function() {
         }
 
         logic.savePageIndexToDb(logic.currentPage)
+        selectionMan.clearSelection()
     })
 
     // NEXT PAGE
@@ -148,6 +149,7 @@ $( document ).ready(async function() {
             letterPanel.innerText = ''
         }
 
+        selectionMan.clearSelection()
         logic.savePageIndexToDb(logic.currentPage)
     })
 

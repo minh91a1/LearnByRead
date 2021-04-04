@@ -98,7 +98,7 @@ logic = {
 
         document.getElementById('pronunciationTextbox').value = data.read
         document.getElementById('hantuTextbox').value = data.hantu
-        $('#meanTextbox').text(data.mean)
+        $('#meanTextbox').val(data.mean)
     },
 
     hideSaveWordBox: function() {
@@ -132,7 +132,7 @@ logic = {
 
         var pr = document.getElementById('pronunciationTextbox').value
         var ht = document.getElementById('hantuTextbox').value
-        var mn = $('#meanTextbox').text()
+        var mn = $('#meanTextbox').val()
 
         if (pr != "" || mn != "") {
             console.log(pr,mn)
@@ -343,7 +343,7 @@ logic = {
             
             if (isFirstTime) {
                 var letterPanel = document.createElement('span')
-                letterPanel.id = index
+                letterPanel.id = index - startIndex
                 letterPanel.innerText = element
                 letterPanel.style.fontSize  = fontSize + "px"
     

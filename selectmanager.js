@@ -53,6 +53,11 @@ selectionMan = {
         selectionMan.lastSelectedId = elementFromPoint.id
     },
 
+    clearSelection: function() {
+        $('.selected').removeClass('selected')
+        $('.selected-1st').removeClass('selected-1st')
+    },
+
     getSelectedText: function() {
         let startIndex = Math.min(selectionMan.firstSelectedId, selectionMan.lastSelectedId)
         let endIndex = Math.max(selectionMan.firstSelectedId, selectionMan.lastSelectedId)
@@ -60,7 +65,9 @@ selectionMan = {
         let selectedText = ''
         for (let index = startIndex; index <= endIndex; index++) {
             var letterPanel = document.getElementById('' + index)
-            selectedText += letterPanel.innerText
+            if (letterPanel) {
+                selectedText += letterPanel.innerText
+            }
         }
 
         return selectedText

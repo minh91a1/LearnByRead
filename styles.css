@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    background-color: #222;
+    background-color: #333 !important;
 }
 
 #readBoxContainer {
@@ -30,10 +30,13 @@ body {
 }
 
 #controlContainer {
-    padding: 1rem;
-    padding-bottom: 0.5rem;
+    padding: 0.5rem 0rem 0rem 0rem;
     display: flex;
     justify-content: center;
+}
+
+#controlContainer button {
+    font-size: 0.7rem;
 }
 
 .ctrl-btn {
@@ -143,15 +146,16 @@ iframe {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 
-    opacity: 0.9;
+    opacity: 1;
 }
   
 /* Modal Content/Box */
 .modal-content-save-word {
-    background-color: #fefefe;
-    margin: 5% auto; /* 15% from the top and centered */
-    padding: 20px;
+    background-color:rgba(0, 0, 0, 0.5);
+    margin: 5% 2%; /* 15% from the top and centered */
+    padding-bottom: 10px;
     border: 1px solid #888;
+    border-radius: 6px;
     /* max-width: 50%; */
 
     display: grid;
@@ -176,8 +180,18 @@ iframe {
     border: none;
 }
 
+.modal-content-save-word-input-text-container #maziiBtn {
+    margin-top: 10px;
+}
+
+.modal-content-save-word-input-text-container #meanTextbox {
+    width: 320px;
+    min-height: 8rem;
+    resize: none;
+}
+
 .modal-content-save-word-input-text-container span {
-    color: dodgerblue;
+    color: whitesmoke;
     font-family: 'Courier New', Courier, monospace;
     margin-top: 0.5rem;
 }
@@ -195,7 +209,7 @@ iframe {
     display: none;
 }
 
-.invisible {
+.invisible-item {
     position: absolute;
     height: 5px;
     opacity: 0;
@@ -206,8 +220,6 @@ iframe {
     height: 100%;
 
     position: relative;
-
-    background-color: #222;
 }
 
 #myTextArea {
@@ -259,12 +271,9 @@ iframe {
     justify-content: center;
 }
 
-.btn-mazii {
-    
+.bot-ctrl-btn.btn-width-60px {
     width: 60px;
-    height: 25px;
 }
-
 
 /* The Modal (background) */
 .modal-addDoc {
@@ -282,20 +291,27 @@ iframe {
   
 /* Modal Content/Box */
 .modal-content-addDoc {
-    background-color: #fefefe;
+    background-color:rgba(0, 0, 0, 0.5);
     margin: 5% auto; /* 15% from the top and centered */
-    padding: 2px;
+    padding: 12px;
     border: 1px solid #888;
+    border-radius: 6px;
     width: 90vw; /* Could be more or less, depending on screen size */
     height: 80vh;
 
     display: grid;
     grid-template-columns: auto;
-    grid-template-rows: 20px auto 60px;
+    grid-template-rows: 35px 30px 35px auto 60px;
 }
 
 #dataDoc {
     resize: none;
+}
+
+.modal-content-addDoc span {
+    display: block;
+    color: whitesmoke;
+    margin-top: 5px;
 }
 
 .modal-content-addDoc-btns {
