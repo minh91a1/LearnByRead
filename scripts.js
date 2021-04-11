@@ -85,10 +85,19 @@ $( document ).ready(async function() {
     textArea.style.width = "340px"
     textArea.style.height = "450px"
 
-    // SET MINI BOX POSITION
-    logic.showMinibox();
+    // get DIMENSIONs
     var rectContainerPanel = containerPanel.getBoundingClientRect();
     var rect = textArea.getBoundingClientRect();
+
+    // build READING PROGRESS
+    var readingProgress = document.getElementById('readingProgress');
+    readingProgress.style.width = "340px"
+    readingProgress.style.height = "2px"
+    $('#readingProgress').css('left', rect.x)
+    $('#readingProgress').css('top', rect.y - rectContainerPanel.y - 5)
+
+    // SET MINI BOX POSITION
+    logic.showMinibox();
     console.log('rect: ',rect)
     $('.modal-content').css('top', rect.y + rect.height - rectContainerPanel.y)
     $('.modal-content').css('left', rect.x + rect.width - 40)
@@ -124,6 +133,7 @@ $( document ).ready(async function() {
 
         logic.savePageIndexToDb(logic.currentPage)
         selectionMan.clearSelection()
+        logic.setReadingProgress(logic.currentPage + 1, logic.maxPageCount)
     })
 
     // NEXT PAGE
@@ -151,6 +161,7 @@ $( document ).ready(async function() {
 
         selectionMan.clearSelection()
         logic.savePageIndexToDb(logic.currentPage)
+        logic.setReadingProgress(logic.currentPage + 1, logic.maxPageCount)
     })
 
     // TRANS

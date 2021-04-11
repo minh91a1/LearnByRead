@@ -325,3 +325,8 @@ iframe {
     margin: 0 0.5rem;
     width: 120px;
 }
+
+.readingProgress {
+    background-color: whitesmoke;
+    position: absolute;
+}

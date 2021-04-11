@@ -312,8 +312,24 @@ logic = {
 
     },
 
+    setReadingProgress: function(pageIndex, pageCount) {
+        let maxLength = 340;
+        var readingProgress = document.getElementById('readingProgress');
+        readingProgress.style.width = (maxLength / pageCount * pageIndex) + "px"
 
-
+        // first page
+        if (pageIndex == 1 && pageIndex != pageCount) {
+            readingProgress.style.backgroundColor = "orangered"
+        }
+        // last page
+        else if (pageIndex == pageCount) {
+            readingProgress.style.backgroundColor = "yellowgreen"
+        }
+        // reading
+        else {
+            readingProgress.style.backgroundColor = "orange"
+        }
+    },
 
     buildReadDataPanel: async function(isFirstTime) {
         var textArea = document.getElementById('myTextArea')
@@ -360,5 +376,7 @@ logic = {
                 letterPanel.innerText = ''
             }
         }
+
+        logic.setReadingProgress(logic.currentPage + 1, logic.maxPageCount)
     },
 }
