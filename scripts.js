@@ -71,6 +71,20 @@ $( document ).ready(async function() {
         });
     });
 
+
+    // EVENTS
+    $('#pronunciationTextbox').on('change keydown paste input', function(e){
+        let newText = $('#pronunciationTextbox').val();
+        let startHantu = newText.indexOf('「');
+        let endHantu = newText.indexOf('」');
+        if (startHantu != -1 && endHantu != -1) {
+            $('#hantuTextbox').val(newText.substring(startHantu, endHantu + 1).trim()); //substring(start, end(but not include))
+            $('#pronunciationTextbox').val(newText.substr(0, startHantu).trim());       //substr(start, length)
+            $('#meanTextbox').focus();
+        }
+    });
+    
+
     logic.getBasicInfoFromDb();
     
     // MY TEXT AREA CONTAINER
