@@ -116,7 +116,10 @@ $( document ).ready(async function() {
     $('.modal-content').css('top', rect.y + rect.height - rectContainerPanel.y)
     $('.modal-content').css('left', rect.x + rect.width - 40)
 
-    logic.buildReadDataPanel(true);
+    // BUILD CHARACTER PANELs ONLY 1 TIME
+    logic.buildReadPanel()
+
+    logic.fillDataOnReadPanel();
 
     // MOUSE DOWN
     document.addEventListener('pointerdown', selectionMan.pointerDown)

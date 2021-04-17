@@ -270,7 +270,7 @@ logic = {
                 var endIndex = startIndex + logic.maxPanelNum
                 endIndex = Math.min(endIndex, logic.currentData.length)
 
-                logic.buildReadDataPanel(false);
+                logic.fillDataOnReadPanel();
             }
         });
     },
@@ -331,10 +331,8 @@ logic = {
         }
     },
 
-    buildReadDataPanel: async function(isFirstTime) {
+    buildReadPanel: function() {
         var textArea = document.getElementById('myTextArea')
-        
-        logic.currentData = await fb.get__Doc__From__Library(logic.getCurrentDoc())
 
         var margin = 0
         var panelWidth = 22 + 2*margin
@@ -346,31 +344,37 @@ logic = {
 
         var maxPanelNum = panelXNum*panelYNum
         logic.maxPanelNum = maxPanelNum
-        var maxPageCount = Math.ceil(logic.currentData.length / maxPanelNum)
+
+        for (let index = 0; index < maxPanelNum; index++) {
+            var letterPanel = document.createElement('span')
+            letterPanel.id = index
+            letterPanel.innerText = ''
+            letterPanel.style.fontSize  = fontSize + "px"
+
+            textArea.appendChild(letterPanel)
+        }
+    },
+
+    fillDataOnReadPanel: async function() {
+        logic.currentData = await fb.get__Doc__From__Library(logic.getCurrentDoc())
+
+        var maxPageCount = Math.ceil(logic.currentData.length / logic.maxPanelNum)
         logic.maxPageCount = maxPageCount
 
         var pageIndex = logic.currentPage
-        var startIndex = pageIndex*maxPanelNum
-        var endIndex = startIndex + maxPanelNum
+        var startIndex = pageIndex*logic.maxPanelNum
+        var endIndex = startIndex + logic.maxPanelNum
         endIndex = Math.min(endIndex, logic.currentData.length)
 
         for (let index = startIndex; index < endIndex; index++) {
-            const element = logic.currentData[index];
+            const char = logic.currentData[index];
             
-            if (isFirstTime) {
-                var letterPanel = document.createElement('span')
-                letterPanel.id = index - startIndex
-                letterPanel.innerText = element
-                letterPanel.style.fontSize  = fontSize + "px"
-    
-                textArea.appendChild(letterPanel)
-            } else {
-                var letterPanel = document.getElementById('' + index - startIndex)
-                letterPanel.innerText = element
-            }
+            var letterPanel = document.getElementById('' + index - startIndex)
+            letterPanel.innerText = char
         }
 
-        for (let index = endIndex - startIndex; index < maxPanelNum; index++) {
+        // clear the rest of panels if not fill all panels
+        for (let index = endIndex - startIndex; index < logic.maxPanelNum; index++) {
             var letterPanel = document.getElementById(''+index)
             if (letterPanel) {
                 letterPanel.innerText = ''
