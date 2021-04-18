@@ -119,8 +119,6 @@ $( document ).ready(async function() {
     // BUILD CHARACTER PANELs ONLY 1 TIME
     logic.buildReadPanel()
 
-    logic.fillDataOnReadPanel();
-
     // MOUSE DOWN
     document.addEventListener('pointerdown', selectionMan.pointerDown)
 
@@ -137,20 +135,10 @@ $( document ).ready(async function() {
             logic.currentPage = 0
         }
 
-        var startIndex = logic.currentPage * logic.maxPanelNum
-        var endIndex = startIndex + logic.maxPanelNum
-        endIndex = Math.min(endIndex, logic.currentData.length)
-
-        for (let index = startIndex; index < endIndex; index++) {
-            const element = logic.currentData[index];
-            
-            var letterPanel = document.getElementById(''+index-startIndex)
-            letterPanel.innerText = element
-        }
+        logic.fillDataOnReadPanel(/*isDataReady*/true)
 
         logic.savePageIndexToDb(logic.currentPage)
         selectionMan.clearSelection()
-        logic.setReadingProgress(logic.currentPage + 1, logic.maxPageCount)
     })
 
     // NEXT PAGE
@@ -160,25 +148,10 @@ $( document ).ready(async function() {
             logic.currentPage = logic.maxPageCount - 1
         }
 
-        var startIndex = logic.currentPage * logic.maxPanelNum
-        var endIndex = startIndex + logic.maxPanelNum
-        endIndex = Math.min(endIndex, logic.currentData.length)
-
-        for (let index = startIndex; index < endIndex; index++) {
-            const element = logic.currentData[index];
-            
-            var letterPanel = document.getElementById('' + index - startIndex)
-            letterPanel.innerText = element
-        }
-
-        for (let index = endIndex - startIndex; index < logic.maxPanelNum; index++) {
-            var letterPanel = document.getElementById(''+index)
-            letterPanel.innerText = ''
-        }
+        logic.fillDataOnReadPanel(/*isDataReady*/true)
 
         selectionMan.clearSelection()
         logic.savePageIndexToDb(logic.currentPage)
-        logic.setReadingProgress(logic.currentPage + 1, logic.maxPageCount)
     })
 
     // TRANS

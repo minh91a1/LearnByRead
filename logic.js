@@ -7,6 +7,8 @@ logic = {
     currentData: '',
     maxPageCount: 0,
     maxPageNum: 0,
+    maxPanelWidth: -1,
+    maxPanelHeight: -1,
 
     changeFontSize: function(val) {
         var currentFont = parseInt($('#readBox').css('font-size').split('px')[0])
@@ -340,7 +342,9 @@ logic = {
         var fontSize = 20
 
         var panelXNum = Math.floor(textArea.offsetWidth / panelWidth)
+        logic.maxPanelWidth = panelXNum
         var panelYNum = Math.floor(textArea.offsetHeight / panelHeight)
+        logic.maxPanelHeight = panelYNum
 
         var maxPanelNum = panelXNum*panelYNum
         logic.maxPanelNum = maxPanelNum
@@ -355,30 +359,93 @@ logic = {
         }
     },
 
-    fillDataOnReadPanel: async function() {
-        logic.currentData = await fb.get__Doc__From__Library(logic.getCurrentDoc())
+    indexingPage: function(data) {
+        let indexResult = []
 
-        var maxPageCount = Math.ceil(logic.currentData.length / logic.maxPanelNum)
-        logic.maxPageCount = maxPageCount
+        let maxPanelWidth = logic.maxPanelWidth
+        let maxPanelNum = logic.maxPanelNum
 
-        var pageIndex = logic.currentPage
-        var startIndex = pageIndex*logic.maxPanelNum
-        var endIndex = startIndex + logic.maxPanelNum
-        endIndex = Math.min(endIndex, logic.currentData.length)
+        let panelIndex = -1 // not pick any panel yet
+        console.log(data.length)
+        for (let dataIndex = 0; dataIndex < data.length; dataIndex++) {
+            if (panelIndex == 240) {
+                var a = 0
+            }
 
-        for (let index = startIndex; index < endIndex; index++) {
-            const char = logic.currentData[index];
-            
-            var letterPanel = document.getElementById('' + index - startIndex)
-            letterPanel.innerText = char
+            // pick panel for this character
+            if (panelIndex == maxPanelNum - 1) {
+                // if this is the last panel, then we need to move to next page and reset panelIndex to zero
+                panelIndex = 0
+            } else {
+                panelIndex += 1
+            }
+
+            if (panelIndex == 0) {
+                // this is new page, we indexing the dataIndex for later use
+                indexResult.push(dataIndex)
+            }
+
+            // pick new character
+            const char = data[dataIndex];
+            if (char == '\n') {
+                // if this is new line character, we need to move panel to last of line
+                if (((panelIndex + 1) % maxPanelWidth) != 0) {
+                    let remandPanelInLine = (maxPanelWidth - ((panelIndex + 1) % maxPanelWidth))
+                    panelIndex += remandPanelInLine
+                } else {
+                    // do nothing, panel index is already the last of line
+                }
+            }
         }
 
-        // clear the rest of panels if not fill all panels
-        for (let index = endIndex - startIndex; index < logic.maxPanelNum; index++) {
-            var letterPanel = document.getElementById(''+index)
-            if (letterPanel) {
-                letterPanel.innerText = ''
+        return indexResult
+    },
+
+    clearAllPanel: function() {
+        for (let panelIndex = 0; panelIndex < logic.maxPanelNum; panelIndex++) {
+            var letterPanel = document.getElementById('' + panelIndex)
+            letterPanel.innerText = ''
+        }
+    },
+
+    fillDataOnReadPanel: async function(isDataReady) {
+        if (!isDataReady) {
+            logic.currentData = await fb.get__Doc__From__Library(logic.getCurrentDoc())
+        }
+
+        var pageIndex = logic.currentPage
+
+        var indexingPage = logic.indexingPage(logic.currentData) ; console.log(indexingPage)
+        var dataIndex = indexingPage[pageIndex]
+
+        logic.maxPageCount = indexingPage.length
+
+        // clear old data
+        logic.clearAllPanel();
+
+        // fill new data
+        for (let panelIndex = 0; panelIndex < logic.maxPanelNum; panelIndex++) {
+            if (dataIndex == logic.currentData.length) {
+                // no more data to fill
+                break;
             }
+            const char = logic.currentData[dataIndex];
+
+            if (char == '\n') {
+                // if this is new line character, we need to fill panel with empty character till to last of line
+                let remandPanelInLine = (logic.maxPanelWidth - ((panelIndex + 1) % logic.maxPanelWidth))
+                for (let emptyIndex = panelIndex; emptyIndex <= panelIndex + remandPanelInLine; emptyIndex++) {
+                    var letterPanel = document.getElementById('' + emptyIndex)
+                letterPanel.innerText = ''
+                }
+                // now move panel to the last of line
+                panelIndex += remandPanelInLine
+            } else {
+                var letterPanel = document.getElementById('' + panelIndex)
+                letterPanel.innerText = char
+            }
+
+            dataIndex++
         }
 
         logic.setReadingProgress(logic.currentPage + 1, logic.maxPageCount)
