@@ -415,7 +415,7 @@ logic = {
 
         var pageIndex = logic.currentPage
 
-        var indexingPage = logic.indexingPage(logic.currentData) ; console.log(indexingPage)
+        var indexingPage = logic.indexingPage(logic.currentData)
         var dataIndex = indexingPage[pageIndex]
 
         logic.maxPageCount = indexingPage.length
@@ -433,13 +433,17 @@ logic = {
 
             if (char == '\n') {
                 // if this is new line character, we need to fill panel with empty character till to last of line
-                let remandPanelInLine = (logic.maxPanelWidth - ((panelIndex + 1) % logic.maxPanelWidth))
-                for (let emptyIndex = panelIndex; emptyIndex <= panelIndex + remandPanelInLine; emptyIndex++) {
-                    var letterPanel = document.getElementById('' + emptyIndex)
-                letterPanel.innerText = ''
+                if (((panelIndex + 1) % logic.maxPanelWidth) != 0) {
+                    let remandPanelInLine = (logic.maxPanelWidth - ((panelIndex + 1) % logic.maxPanelWidth))
+                    for (let emptyIndex = panelIndex; emptyIndex <= panelIndex + remandPanelInLine; emptyIndex++) {
+                        var letterPanel = document.getElementById('' + emptyIndex)
+                        letterPanel.innerText = ''
+                    }
+                    // now move panel to the last of line
+                    panelIndex += remandPanelInLine
+                } else {
+                    // do nothing, panel index is already the last of line
                 }
-                // now move panel to the last of line
-                panelIndex += remandPanelInLine
             } else {
                 var letterPanel = document.getElementById('' + panelIndex)
                 letterPanel.innerText = char
