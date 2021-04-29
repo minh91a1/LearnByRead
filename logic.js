@@ -368,10 +368,6 @@ logic = {
         let panelIndex = -1 // not pick any panel yet
         console.log(data.length)
         for (let dataIndex = 0; dataIndex < data.length; dataIndex++) {
-            if (panelIndex == 240) {
-                var a = 0
-            }
-
             // pick panel for this character
             if (panelIndex == maxPanelNum - 1) {
                 // if this is the last panel, then we need to move to next page and reset panelIndex to zero
@@ -391,7 +387,16 @@ logic = {
                 // if this is new line character, we need to move panel to last of line
                 if (((panelIndex + 1) % maxPanelWidth) != 0) {
                     let remandPanelInLine = (maxPanelWidth - ((panelIndex + 1) % maxPanelWidth))
-                    panelIndex += remandPanelInLine
+                    
+                    if (remandPanelInLine == maxPanelWidth - 1) {
+                        // this is the very first panel of line, we shouldn't create new line
+                        // so we un-do-this-shift-panel !
+                        panelIndex -= 1
+                        console.log('new line at first panel of line')
+                    } else {
+                        // move panel to last
+                        panelIndex += remandPanelInLine
+                    }
                 } else {
                     // do nothing, panel index is already the last of line
                 }
@@ -435,12 +440,20 @@ logic = {
                 // if this is new line character, we need to fill panel with empty character till to last of line
                 if (((panelIndex + 1) % logic.maxPanelWidth) != 0) {
                     let remandPanelInLine = (logic.maxPanelWidth - ((panelIndex + 1) % logic.maxPanelWidth))
-                    for (let emptyIndex = panelIndex; emptyIndex <= panelIndex + remandPanelInLine; emptyIndex++) {
-                        var letterPanel = document.getElementById('' + emptyIndex)
-                        letterPanel.innerText = ''
+
+                    if (remandPanelInLine == logic.maxPanelWidth - 1) {
+                        // this is the very first panel of line, we shouldn't create new line
+                        // so we un-do-this-shift-panel !
+                        panelIndex -= 1
+                    } else {
+                        for (let emptyIndex = panelIndex; emptyIndex <= panelIndex + remandPanelInLine; emptyIndex++) {
+                            var letterPanel = document.getElementById('' + emptyIndex)
+                            letterPanel.innerText = ''
+                        }
+                        // now move panel to the last of line
+                        panelIndex += remandPanelInLine
                     }
-                    // now move panel to the last of line
-                    panelIndex += remandPanelInLine
+                    
                 } else {
                     // do nothing, panel index is already the last of line
                 }
